@@ -1,4 +1,4 @@
-FROM alpine:3.7
+FROM python:3.6-alpine
 
 # VERSIONS
 ENV ALPINE_VERSION=3.7 \
