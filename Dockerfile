@@ -5,4 +5,4 @@ COPY project /project
 
 RUN mkdir /tests
 
-ENTRYPOINT /bin/sh
+ENTRYPOINT ["/bin/bash"]
