@@ -6,32 +6,21 @@ node('master') {
         sh 'docker run --rm -i hadolint/hadolint < Dockerfile'
     }
     stage('Build Image') {
-        def dockerImage = docker.build("zonex/test:${env.BUILD_ID}")
+        def dockerImage = docker.build("test:${env.BUILD_ID}")
     }
     stage('Test Application') {
-        def dockerImage = docker.image("zonex/test:${env.BUILD_ID}")
+        def dockerImage = docker.image("test:${env.BUILD_ID}")
         dockerImage.inside {
             sh 'pip list --outdated'
-            sh 'pip install -r /app/requirements/dev.txt'
-            sh 'pylint /app'
-            sh 'py.test /tests'
+            sh 'pip install -r /validator.txt'
+            sh 'pylint /project'
         }
     }
     stage('Code Coverage') {
-        def dockerImage = docker.image("zonex/test:${env.BUILD_ID}")
+        def dockerImage = docker.image("test:${env.BUILD_ID}")
         dockerImage.inside {
-            sh 'pip install -r /app/requirements/dev.txt'
-            sh 'py.test --cov=app tests/'
-        }
-    }
-    stage('Build Production') {
-        echo 'Building..'
-    }
-    stage('Push to Registry') {
-        docker.withRegistry("https://registry-1.docker.io" ,"dockerhub") {
-            def dockerImage = docker.image("zonex/test:${env.BUILD_ID}")
-            dockerImage.push()
-            dockerImage.push('latest')
+            sh 'pip install -r /validator.txt'
+            sh 'py.test --cov=app tests'
         }
     }
 }
